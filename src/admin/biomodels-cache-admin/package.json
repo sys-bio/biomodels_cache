@@ -1,0 +1,12 @@
+{
+  "name": "biomodels-cache-admin",
+  "version": "1.0.0",
+  "description": "A package for managing the biomodels cache.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}
