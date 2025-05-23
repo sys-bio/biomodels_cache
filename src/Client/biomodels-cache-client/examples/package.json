@@ -1,0 +1,16 @@
+{
+  "name": "biomodels-cache-client-examples",
+  "version": "1.0.0",
+  "description": "Examples for biomodels-cache-client",
+  "scripts": {
+    "start": "ts-node client_example.ts"
+  },
+  "dependencies": {
+    "biomodels-cache-client": "file:.."
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.103",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.3"
+  }
+}

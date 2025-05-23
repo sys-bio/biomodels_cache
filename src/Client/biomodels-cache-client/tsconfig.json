@@ -1,14 +1,32 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es2015",
     "module": "commonjs",
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "lib": ["es2015", "dom"],
+    "types": ["node"],
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitThis": false,
+    "noEmitHelpers": false,
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "include": ["src", "examples"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

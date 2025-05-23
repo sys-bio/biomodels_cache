@@ -5,8 +5,6 @@ import os
 import json
 from typing import Dict, List, Any, Optional, Union
 from datetime import datetime
-from .api import BioModelsAPI
-
 
 class CacheManager:
     """Manages a local cache of BioModels data."""
@@ -46,18 +44,19 @@ class CacheManager:
         with open(self.cache_file, "w") as f:
             json.dump(self.cache, f, indent=2)
     
-    def update_cache(self, progress_callback=None) -> None:
-        """Update the cache with the latest data from BioModels."""
-        api = BioModelsAPI()
-        models = api.get_models()
+    def update_cache(self, models: List[Dict[str, Any]], progress_callback=None) -> None:
+        """
+        Update the cache with new model data.
+        
+        Args:
+            models: List of model data to cache
+            progress_callback: Optional callback for progress updates
+        """
         total = len(models)
         for idx, model in enumerate(models, 1):
             model_id = model["id"]
             if model_id not in self.cache:
-                # Get full model details
-                model_data = api.get_model(model_id)
-                if model_data:  # Only add if model exists
-                    self.cache[model_id] = model_data
+                self.cache[model_id] = model
             if progress_callback:
                 progress_callback(idx, total)
         # Save updated cache

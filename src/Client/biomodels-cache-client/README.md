@@ -1,6 +1,6 @@
 # BioModels Cache Client
 
-A TypeScript client library for accessing the BioModels cache. This package provides a clean interface for searching and retrieving models from the cache.
+A TypeScript client library for accessing and managing the BioModels cache.
 
 ## Installation
 
@@ -13,210 +13,136 @@ npm install biomodels-cache-client
 ### Basic Usage
 
 ```typescript
-import { BiomodelsCacheClient, CacheConfig } from "biomodels-cache-client";
+import { BioModelsCacheClient } from "biomodels-cache-client";
 
 // Initialize the client
-const config: CacheConfig = {
-  path: "./cache", // Directory where the cache is stored
-  accessType: "local", // Currently only 'local' is implemented
-  cacheFileName: "biomodels_cache.json", // Optional, defaults to "biomodels_cache.json"
-};
+const client = new BioModelsCacheClient();
+await client.initialize({
+  path: "./cache",
+  accessType: "local",
+});
 
-const client = new BiomodelsCacheClient(config);
-
-// Initialize the client (this will load the cache)
-await client.initialize();
-
-// Get a model by ID (supports both full and numeric IDs)
-const model = await client.getByKey("52"); // Will automatically convert to BIOMD0000000052
-// or
-const model = await client.getByKey("BIOMD0000000052");
+// Get a model by ID
+const model = await client.getByKey("BIOMD0000000001");
+console.log(model);
 
 // Search for models
 const results = await client.search({
-  query: "cell cycle", // Search term
+  term: "cell cycle",
   filters: {
-    authors: ["John Smith"], // Optional: filter by authors
-    journals: ["Nature"], // Optional: filter by journals
+    authors: ["Smith"],
+    journals: ["Nature"],
     dateRange: {
-      // Optional: filter by date range
       start: "2020-01-01",
       end: "2023-12-31",
     },
   },
-  page: 1, // Optional: page number (1-based)
-  pageSize: 10, // Optional: number of results per page
+  limit: 10,
+  offset: 0,
 });
+console.log(results);
+
+// Get file descriptor
+const descriptor = await client.getFileDescriptor("BIOMD0000000001");
+console.log(descriptor);
 ```
 
-### React Example
+## Features
 
-```typescript
-import React, { useEffect, useState } from "react";
-import {
-  BiomodelsCacheClient,
-  CacheConfig,
-  CacheEntry,
-} from "biomodels-cache-client";
-
-const config: CacheConfig = {
-  path: "./cache",
-  accessType: "local",
-};
-
-const client = new BiomodelsCacheClient(config);
-
-function ModelViewer() {
-  const [model, setModel] = useState<CacheEntry | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadModel() {
-      try {
-        await client.initialize();
-        const model = await client.getByKey("52");
-        setModel(model);
-      } catch (error) {
-        console.error("Error loading model:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadModel();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-  if (!model) return <div>Model not found</div>;
-
-  return (
-    <div>
-      <h1>{model.metadata.title}</h1>
-      <p>Authors: {model.metadata.publicationAuthors.join(", ")}</p>
-      <p>Journal: {model.metadata.journal}</p>
-      <p>{model.metadata.synopsis}</p>
-    </div>
-  );
-}
-```
-
-### Search Example
-
-```typescript
-import { BiomodelsCacheClient, CacheConfig } from "biomodels-cache-client";
-
-const config: CacheConfig = {
-  path: "./cache",
-  accessType: "local",
-};
-
-const client = new BiomodelsCacheClient(config);
-
-async function searchModels() {
-  await client.initialize();
-
-  // Search for models with filters
-  const results = await client.search({
-    query: "cell cycle",
-    filters: {
-      authors: ["John Smith"],
-      journals: ["Nature"],
-      dateRange: {
-        start: "2020-01-01",
-        end: "2023-12-31",
-      },
-    },
-    page: 1,
-    pageSize: 10,
-  });
-
-  // Process results
-  results.forEach((result) => {
-    console.log(`Model ID: ${result.modelId}`);
-    console.log(`Title: ${result.metadata.title}`);
-    console.log(`Score: ${result.score}`);
-    console.log("Matches:");
-    result.matches.forEach((match) => {
-      console.log(`  ${match.field}: ${match.snippet}`);
-    });
-    console.log("---");
-  });
-}
-```
+- Local and remote cache access
+- Key-based model retrieval
+- Content-based search with filters
+- File descriptor management
+- Error handling and retries
+- TypeScript support
 
 ## API Reference
 
-### BiomodelsCacheClient
+### CacheClient
 
-The main class for accessing the BioModels cache.
-
-#### Constructor
-
-```typescript
-constructor(config: CacheConfig)
-```
-
-- `config`: Configuration object for the client
+The main interface for interacting with the cache.
 
 #### Methods
 
-- `initialize(): Promise<void>`
+- `initialize(config: CacheConfig): Promise<void>`
 
-  - Initialize the client and load the cache
+  - Initializes the cache client with the specified configuration
 
-- `getByKey(modelId: string): Promise<CacheEntry | null>`
+- `getByKey(key: string): Promise<ModelData | null>`
 
-  - Get a model by ID
-  - `modelId`: The model ID (can be full ID or numeric ID)
+  - Retrieves a model by its ID
 
-- `search(query: SearchQuery): Promise<SearchResult[]>`
-  - Search for models
-  - `query`: Search query object
+- `search(query: SearchQuery): Promise<ModelData[]>`
 
-### Types
+  - Searches for models based on content and filters
 
-#### CacheConfig
+- `getFileDescriptor(modelId: string): Promise<FileDescriptor>`
+  - Gets file information for a model
+
+### Configuration
 
 ```typescript
 interface CacheConfig {
-  path: string;
-  accessType: "local" | "github" | "remote";
-  githubRepo?: string;
-  branch?: string;
-  cacheFileName?: string;
+  path: string; // Path to the cache storage
+  accessType: "local" | "remote"; // Type of cache access
+  options?: {
+    timeout?: number; // Request timeout in milliseconds
+    retryAttempts?: number; // Number of retry attempts
+    cacheExpiry?: number; // Cache expiry time in seconds
+  };
 }
 ```
 
-#### CacheEntry
-
-```typescript
-interface CacheEntry {
-  modelId: string;
-  files: Record<string, string>;
-  metadata: ModelMetadata;
-}
-```
-
-#### SearchQuery
+### Search Query
 
 ```typescript
 interface SearchQuery {
-  query: string;
-  filters?: SearchFilters;
-  page?: number;
-  pageSize?: number;
+  term: string; // Search term
+  filters?: {
+    authors?: string[]; // Filter by authors
+    journals?: string[]; // Filter by journals
+    dateRange?: {
+      start: string; // Start date (YYYY-MM-DD)
+      end: string; // End date (YYYY-MM-DD)
+    };
+  };
+  limit?: number; // Maximum number of results
+  offset?: number; // Pagination offset
 }
 ```
 
-#### SearchResult
+## Error Handling
+
+The client uses a custom `CacheError` class for error handling:
 
 ```typescript
-interface SearchResult {
-  modelId: string;
-  score: number;
-  matches: Match[];
-  metadata: ModelMetadata;
+try {
+  await client.getByKey("invalid-id");
+} catch (error) {
+  if (error instanceof CacheError) {
+    console.error(`Cache error: ${error.message} (${error.code})`);
+  }
 }
+```
+
+## Development
+
+### Building
+
+```bash
+npm run build
+```
+
+### Testing
+
+```bash
+npm test
+```
+
+### Linting
+
+```bash
+npm run lint
 ```
 
 ## License

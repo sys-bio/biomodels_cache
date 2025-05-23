@@ -1,3 +1,2 @@
-export * from './types';
-export * from './BiomodelsCacheClient';
-export * from './storage/LocalFileStorage'; 
+export { BioModelsCacheClient } from './client';
+export * from './types'; 

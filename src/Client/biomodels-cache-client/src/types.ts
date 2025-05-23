@@ -1,75 +1,57 @@
 export interface CacheConfig {
-  localStorage: Storage;
-  indexedDBStorage: Storage;
-}
-
-export interface ModelMetadata {
-  id: string;
-  name: string;
-  title: string;
-  curators: string[];
-  publicationAuthors: string[];
-  synopsis: string;
-  citation: string;
-  date: string;
-  journal: string;
-  lastUpdated: string;
-  files: Record<string, string>;
-}
-
-export interface CacheEntry {
-  modelId: string;
-  files: Record<string, string>;
-  metadata: ModelMetadata;
-}
-
-export interface SearchQuery {
-  query: string;
-  filters?: SearchFilters;
-  page?: number;
-  pageSize?: number;
-}
-
-export interface SearchFilters {
-  authors?: string[];
-  journals?: string[];
-  dateRange?: {
-    start: string;
-    end: string;
+  path: string;
+  accessType: 'local' | 'remote';
+  options?: {
+    timeout?: number;
+    retryAttempts?: number;
+    cacheExpiry?: number;
   };
 }
 
-export interface DateRange {
-  start: string;
-  end: string;
+export interface SearchQuery {
+  term: string;
+  filters?: {
+    authors?: string[];
+    journals?: string[];
+    dateRange?: {
+      start: string;
+      end: string;
+    };
+  };
+  limit?: number;
+  offset?: number;
 }
 
-export interface SearchResult {
+export interface ModelData {
+  id: string;
+  name: string;
+  title: string;
+  synopsis: string;
+  publicationAuthors: string[];
+  journal: string;
+  date: string;
+  [key: string]: any; // Additional model metadata
+}
+
+export interface FileDescriptor {
   modelId: string;
-  score: number;
-  matches: Match[];
-  metadata: ModelMetadata;
+  filePath: string;
+  fileType: string;
+  size: number;
+  lastModified: Date;
+  checksum?: string;
 }
 
-export interface Match {
-  field: string;
-  snippet: string;
+export interface CacheClient {
+  initialize(config: CacheConfig): Promise<void>;
+  getByKey(key: string): Promise<ModelData | null>;
+  search(query: SearchQuery): Promise<ModelData[]>;
+  getFileDescriptor(modelId: string): Promise<FileDescriptor>;
 }
 
-export interface CacheStorage {
-  initialize(): Promise<void>;
-  getEntry(modelId: string): Promise<CacheEntry | null>;
-  saveEntry(entry: CacheEntry): Promise<void>;
-  deleteEntry(modelId: string): Promise<void>;
-  search(query: SearchQuery): Promise<SearchResult[]>;
-}
-
-export interface Storage {
-  getModel(id: string): Promise<ModelMetadata | null>;
-  searchModels(
-    query: string,
-    filters?: SearchFilters
-  ): Promise<ModelMetadata[]>;
-  updateCache(models: Record<string, ModelMetadata>): Promise<void>;
-  initialize?(): Promise<void>;
-}
+export class CacheError extends Error {
+  constructor(message: string, public code: string) {
+    super(message);
+    this.name = 'CacheError';
+  }
+} 
