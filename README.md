@@ -1,4 +1,4 @@
-# BioModels Cache Monorepo
+# BioModels Cache
 
 This repository contains two main packages for working with BioModels data:
 
