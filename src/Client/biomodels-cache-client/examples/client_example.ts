@@ -42,9 +42,7 @@ const main = async (): Promise<void> => {
 
       if (model) {
         console.log(`Model: ${model.name || "Unknown"}`);
-        console.log(
-          `Authors: ${model.publicationAuthors?.join(", ") || "Unknown"}`
-        );
+        console.log(`Authors: ${model.authors?.join(", ") || "Unknown"}`);
         console.log(`Title: ${model.title || "Unknown"}`);
         console.log(
           `Synopsis: ${model.synopsis?.substring(0, 100) || "No synopsis"}...`
@@ -88,7 +86,7 @@ const main = async (): Promise<void> => {
         models.forEach((model: ModelData, index: number) => {
           const modelId = model.id || "Unknown";
           const modelName = model.name || "Unknown";
-          const authors = model.publicationAuthors?.join(", ") || "Unknown";
+          const authors = model.authors?.join(", ") || "Unknown";
           const title = model.title || "Unknown";
           const synopsis = model.synopsis
             ? `${model.synopsis.substring(0, 150)}...`

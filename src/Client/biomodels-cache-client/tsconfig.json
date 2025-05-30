@@ -10,7 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "lib": ["es2015", "dom"],
-    "types": ["node"],
+    "types": ["node", "jest"],
     "allowJs": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -24,7 +24,6 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitThis": false,
     "noEmitHelpers": false,
-    "allowImportingTsExtensions": true,
     "moduleDetection": "force"
   },
   "include": ["src", "examples"],

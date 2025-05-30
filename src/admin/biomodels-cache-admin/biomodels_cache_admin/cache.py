@@ -115,7 +115,7 @@ class CacheManager:
         """Apply filters to a model."""
         # Author filter
         if "authors" in filters:
-            authors = [a.lower() for a in model["publicationAuthors"]]
+            authors = [a.lower() for a in model["authors"]]
             filter_authors = [a.lower() for a in filters["authors"]]
             if not any(a in authors for a in filter_authors):
                 return False

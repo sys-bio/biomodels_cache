@@ -2,18 +2,18 @@
   "BIOMD0000000001": {
     "name": "Edelstein1996 - EPSP ACh event",
     "authors": [
-      "Edelstein SJ",
-      "Schaad O",
-      "Henry E",
-      "Bertrand D",
-      "Changeux JP"
+      "S J Edelstein",
+      "O Schaad",
+      "E Henry",
+      "D Bertrand",
+      "J P Changeux"
     ],
     "url": "http://identifiers.org/pubmed/8983160",
     "model_id": "BIOMD0000000001",
     "title": "A kinetic mechanism for nicotinic acetylcholine receptors based on multiple allosteric transitions.",
     "synopsis": "Nicotinic acetylcholine receptors are transmembrane oligomeric proteins that mediate interconversions between open and closed channel states under the control of neurotransmitters. Fast in vitro chemical kinetics and in vivo electrophysiological recordings are consistent with the following multi-step scheme. Upon binding of agonists, receptor molecules in the closed but activatable resting state (the Basal state, B) undergo rapid transitions to states of higher affinities with either open channels (the Active state, A) or closed channels (the initial Inactivatable and fully Desensitized states, I and D). In order to represent the functional properties of such receptors, we have developed a kinetic model that links conformational interconversion rates to agonist binding and extends the general principles of the Monod-Wyman-Changeux model of allosteric transitions. The crucial assumption is that the linkage is controlled by the position of the interconversion transition states on a hypothetical linear reaction coordinate. Application of the model to the peripheral nicotine acetylcholine receptor (nAChR) accounts for the main properties of ligand-gating, including single-channel events, and several new relationships are predicted. Kinetic simulations reveal errors inherent in using the dose-response analysis, but justify its application under defined conditions. The model predicts that (in order to overcome the intrinsic stability of the B state and to produce the appropriate cooperativity) channel activation is driven by an A state with a Kd in the 50 nM range, hence some 140-fold stronger than the apparent affinity of the open state deduced previously. According to the model, recovery from the desensitized states may occur via rapid transit through the A state with minimal channel opening, thus without necessarily undergoing a distinct recovery pathway, as assumed in the standard 'cycle' model. Transitions to the desensitized states by low concentration 'pre-pulses' are predicted to occur without significant channel opening, but equilibrium values of IC50 can be obtained only with long pre-pulse times. Predictions are also made concerning allosteric effectors and their possible role in coincidence detection. In terms of future developments, the analysis presented here provides a physical basis for constructing more biologically realistic models of synaptic modulation that may be applied to artificial neural networks.",
     "citation": null,
-    "date": "1996-11",
+    "date": 1996,
     "journal": "Biological cybernetics"
   },
   "BIOMD0000000002": {

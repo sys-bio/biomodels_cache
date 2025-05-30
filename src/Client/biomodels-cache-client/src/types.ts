@@ -1,6 +1,6 @@
 export interface CacheConfig {
   path: string;
-  accessType: 'local' | 'remote';
+  accessType: "local" | "remote";
   options?: {
     timeout?: number;
     retryAttempts?: number;
@@ -27,7 +27,7 @@ export interface ModelData {
   name: string;
   title: string;
   synopsis: string;
-  publicationAuthors: string[];
+  authors: string[];
   journal: string;
   date: string;
   [key: string]: any; // Additional model metadata
@@ -52,6 +52,6 @@ export interface CacheClient {
 export class CacheError extends Error {
   constructor(message: string, public code: string) {
     super(message);
-    this.name = 'CacheError';
+    this.name = "CacheError";
   }
-} 
+}

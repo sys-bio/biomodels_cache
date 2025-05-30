@@ -1,2 +1,2 @@
-export { BioModelsCacheClient } from './client';
-export * from './types'; 
+export { BioModelsCacheClient } from "./client";
+export * from "./types";

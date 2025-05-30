@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/await-thenable */
 import fs from "fs";
 import path from "path";
 import {
@@ -236,10 +237,8 @@ export class BioModelsCacheClient implements CacheClient {
     // Apply filters if specified
     if (filters) {
       // Author filter
-      if (filters.authors?.length && model.publicationAuthors?.length) {
-        const modelAuthors = model.publicationAuthors.map((a) =>
-          a.toLowerCase()
-        );
+      if (filters.authors?.length && model.authors?.length) {
+        const modelAuthors = model.authors.map((a) => a.toLowerCase());
         if (
           !filters.authors.some((a) => modelAuthors.includes(a.toLowerCase()))
         ) {
