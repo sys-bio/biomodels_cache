@@ -17,12 +17,12 @@ def normalize_model(model, requested_id: str = None):
     authors = model.get("authors") or publication.get("authors") or []
     if isinstance(authors, list) and authors and isinstance(authors[0], dict):
         authors = [a.get("name", "") for a in authors]
-    
+
     # Ensure we have a valid model_id
     model_id = model.get("id") or requested_id
     if not model_id:
         raise ValueError("Model ID is required")
-        
+
     return {
         "name": model.get("name") or publication.get("title"),
         "authors": authors,
@@ -63,7 +63,7 @@ class BioModelsAPI:
         # Convert numeric ID to full ID if needed
         if model_id.isdigit():
             model_id = f"BIOMD{model_id.zfill(10)}"
-            
+
         # Check cache first
         cached_model = self.cache_manager.get_model(model_id)
         if cached_model:
