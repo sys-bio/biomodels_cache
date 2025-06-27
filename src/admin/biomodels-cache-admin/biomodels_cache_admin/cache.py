@@ -3,13 +3,14 @@ Cache management for BioModels data.
 """
 import os
 import json
-from typing import Dict, List, Any, Optional, Union
+import re
+from typing import Dict, List, Any, Optional, Union, Callable
 from datetime import datetime
 
 class CacheManager:
     """Manages a local cache of BioModels data."""
     
-    def __init__(self, cache_dir: str = None):
+    def __init__(self, cache_dir: str):
         """
         Initialize the cache manager.
         
@@ -44,13 +45,15 @@ class CacheManager:
         with open(self.cache_file, "w") as f:
             json.dump(self.cache, f, indent=2)
     
-    def update_cache(self, models: List[Dict[str, Any]], progress_callback=None) -> None:
+    def update_cache(self, models: List[Dict[str, Any]], progress_callback: Optional[Callable[[int, int], None]] = None) -> None:
         """
         Update the cache with new model data.
         
         Args:
             models: List of model data to cache
-            progress_callback: Optional callback for progress updates
+            progress_callback: Optional callback for progress updates.
+                             Signature: progress_callback(current: int, total: int) -> None
+                             Example: Use tqdm.tqdm.write() or tqdm.update() for progress display
         """
         total = len(models)
         for idx, model in enumerate(models, 1):
@@ -88,20 +91,55 @@ class CacheManager:
         
         Args:
             query: Search query string
-            filters: Optional filters to apply
+            filters: Optional filters to apply. Available filters:
+                - authors: List[str] - Filter by author names (case-insensitive)
+                - journals: List[str] - Filter by journal names (case-insensitive)
+                - dateRange: Dict[str, str] - Filter by date range with 'start' and 'end' keys (format: 'YYYY-MM-DD')
+                - caseSensitive: bool - Whether to perform case-sensitive search (default: False)
+                - useRegex: bool - Whether to treat query as regular expression (default: False)
             
         Returns:
             List of matching models
         """
         results = []
-        query = query.lower()
+        
+        # Extract search options from filters
+        case_sensitive = filters.get("caseSensitive", False) if filters else False
+        use_regex = filters.get("useRegex", False) if filters else False
+        
+        # Prepare search query
+        if use_regex:
+            try:
+                search_pattern = re.compile(query, flags=0 if case_sensitive else re.IGNORECASE)
+            except re.error as e:
+                raise ValueError(f"Invalid regular expression: {e}")
+        else:
+            if not case_sensitive:
+                query = query.lower()
         
         for model in self.cache.values():
-            # Basic text search
-            if (query in model["name"].lower() or
-                query in model["title"].lower() or
-                query in model["synopsis"].lower()):
-                
+            # Perform search based on configuration
+            if use_regex:
+                matches = (
+                    search_pattern.search(model["name"]) or
+                    search_pattern.search(model["title"]) or
+                    search_pattern.search(model["synopsis"])
+                )
+            else:
+                if case_sensitive:
+                    matches = (
+                        query in model["name"] or
+                        query in model["title"] or
+                        query in model["synopsis"]
+                    )
+                else:
+                    matches = (
+                        query in model["name"].lower() or
+                        query in model["title"].lower() or
+                        query in model["synopsis"].lower()
+                    )
+            
+            if matches:
                 # Apply filters if specified
                 if filters:
                     if not self._apply_filters(model, filters):
